@@ -420,7 +420,10 @@ function everythingManager() {
     wall.play();
   }
 
-  let player = ball.xP < canvasEl.width / 2 ? playerPaddleRI : playerPaddleAI;
+  let player =
+    ball.xP + ball.radius < canvasEl.width / 2
+      ? playerPaddleRI
+      : playerPaddleAI;
 
   if (paddleCollision(ball, player)) {
     hit.play();
@@ -434,7 +437,7 @@ function everythingManager() {
     let bounceAngle = (collisionPoint * Math.PI) / 4;
 
     // calculating the direction of the ball when it bounces back
-    let direction = ball.xP < canvasEl.width / 2 ? 1 : -1;
+    let direction = ball.xP + ball.radius < canvasEl.width / 2 ? 1 : -1;
 
     // updating the velocity when the ball hits either paddle
     ball.xV = direction * ball.speed * Math.cos(bounceAngle);
