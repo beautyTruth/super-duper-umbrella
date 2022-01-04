@@ -324,6 +324,57 @@ function drawText(content, xP, yP, color) {
 
 function drawNet() {
   for (let w = 0; w < canvasEl.height; w += 15) {
-    drawRect(net.xP, net.yP + 1, net.width, net.height, net.color);
+    drawRect(net.xP, net.yP + w, net.width, net.height, net.color);
   }
 }
+
+// =-=-=-=-=-=-=-==-=-=-=--=-=- THE GAME LOOP -=-=-=--=-==-=-=-=-=-
+
+function runGame() {
+  // clearing the canvas
+  drawRect(0, 0, canvasEl.width, canvasEl.height, "#708090");
+
+  drawNet();
+
+  drawText(
+    playerPaddleRI.score,
+    (1 * canvasEl.width) / 4,
+    (1 * canvasEl.height) / 10,
+    "yellow"
+  );
+
+  drawText(
+    playerPaddleAI.score,
+    (3 * canvasEl.width) / 4,
+    (1 * canvasEl.height) / 10,
+    "yellow"
+  );
+
+  drawRect(
+    playerPaddleRI.xP,
+    playerPaddleRI.yP,
+    playerPaddleRI.width,
+    playerPaddleRI.height,
+    playerPaddleRI.color
+  );
+
+  drawRect(
+    playerPaddleAI.xP,
+    playerPaddleAI.yP,
+    playerPaddleAI.width,
+    playerPaddleAI.height,
+    playerPaddleAI.color
+  );
+
+  drawCircle(ball.xP, ball.yP, ball.radius, "black");
+}
+
+// game initialization
+
+function gameInit() {
+  runGame();
+}
+
+// looping the game to keep it running
+const FPS = 60;
+setInterval(gameInit, 1000 / FPS);
