@@ -261,18 +261,18 @@ const playerPaddleRI = {
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 20,
-  color: "blue",
+  color: "aqua",
   score: 0,
 };
 
 // the AI player's paddle
 
 const playerPaddleAI = {
-  xP: canvasEl.width - 10,
+  xP: canvasEl.width - 20,
   yP: canvasEl.height / 2 - 100 / 2,
   height: 100,
   width: 20,
-  color: "red",
+  color: "peachpuff",
   score: 0,
 };
 
@@ -285,7 +285,7 @@ const ball = {
   speed: 7,
   xV: 5,
   yV: 5,
-  color: "white",
+  color: "black",
 };
 
 const net = {
@@ -369,9 +369,42 @@ function runGame() {
   drawCircle(ball.xP, ball.yP, ball.radius, "black");
 }
 
+// the paddles collision detection function
+
+function paddleCollision(BALL, PADDLE) {
+  BALL.top = BALL.yP - radius;
+  BALL.bottom = BALL.yP + BALL.radius;
+  BALL.left = BALL.xP - radius;
+  BALL.right = BALL.xP + BALL.radius;
+
+  PADDLE.top = PADDLE.yP;
+  PADDLE.bottom = PADDLE.yP + PADDLE.height;
+  PADDLE.left = PADDLE.xP;
+  PADDLE.right = PADDLE.xP + PADDLE.width;
+
+  return (
+    BALL.right > PADDLE.left &&
+    BALL.bottom > PADDLE.top &&
+    BALL.left < PADDLE.right &&
+    BALL.top < PADDLE.bottom
+  );
+}
+
+// the everything manager function
+function everythingManager() {
+  ball.xP += ball.xV;
+  ball.yP += ball.yV;
+
+  if (ball.yP + ball.radius > canvasEl.height || ball.yP - ball.radius < 0) {
+    ball.yV = -ball.yV;
+    wall.play();
+  }
+}
+
 // game initialization
 
 function gameInit() {
+  everythingManager();
   runGame();
 }
 
