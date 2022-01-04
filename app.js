@@ -369,12 +369,19 @@ function runGame() {
   drawCircle(ball.xP, ball.yP, ball.radius, "black");
 }
 
+// the player paddle RI event listener
+
+canvasEl.addEventListener("mousemove", movePaddle);
+function movePaddle(e) {
+  let canvasRect = canvasEl.getBoundingClientRect();
+  playerPaddleRI.yP = e.clientY - canvasRect.top - playerPaddleRI.height / 2;
+}
 // the paddles collision detection function
 
 function paddleCollision(BALL, PADDLE) {
-  BALL.top = BALL.yP - radius;
+  BALL.top = BALL.yP - BALL.radius;
   BALL.bottom = BALL.yP + BALL.radius;
-  BALL.left = BALL.xP - radius;
+  BALL.left = BALL.xP - BALL.radius;
   BALL.right = BALL.xP + BALL.radius;
 
   PADDLE.top = PADDLE.yP;
@@ -395,9 +402,38 @@ function everythingManager() {
   ball.xP += ball.xV;
   ball.yP += ball.yV;
 
+  let intelligenceLevel = 0.1;
+  playerPaddleAI.yP +=
+    (ball.yP - (playerPaddleAI.yP + playerPaddleAI.height / 2)) *
+    intelligenceLevel;
+
   if (ball.yP + ball.radius > canvasEl.height || ball.yP - ball.radius < 0) {
     ball.yV = -ball.yV;
     wall.play();
+  }
+
+  let player = ball.xP < canvasEl.width / 2 ? playerPaddleRI : playerPaddleAI;
+
+  if (paddleCollision(ball, player)) {
+    hit.play();
+
+    let collisionPoint = ball.yP - (player.yP + player.height / 2);
+
+    // normalization -=-=-=- converting -50 and 50 to -1 and 1 or somewhere in that range
+    collisionPoint = collisionPoint / (player.height / 2);
+
+    // calculating the bounce angle at which the ball bounces back (this will be in radians)
+    let bounceAngle = (collisionPoint * Math.PI) / 4;
+
+    // calculating the direction of the ball when it bounces back
+    let direction = ball.xP < canvasEl.width / 2 ? 1 : -1;
+
+    // updating the velocity when the ball hits either paddle
+    ball.xV = direction * ball.speed * Math.cos(bounceAngle);
+    ball.yV = direction * ball.speed * Math.sin(bounceAngle);
+
+    // increase speed of the ball after each bounce
+    ball.speed += 0.1;
   }
 }
 
